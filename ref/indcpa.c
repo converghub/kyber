@@ -5,6 +5,9 @@
 #include "randombytes.h"
 #include "fips202.h"
 #include "ntt.h"
+#if(_WIN32)
+#include <malloc.h>
+#endif	
 
 /*************************************************
 * Name:        pack_pk
@@ -124,7 +127,11 @@ void gen_matrix(polyvec *a, const unsigned char *seed, int transposed) // Not st
   unsigned int pos=0, ctr;
   uint16_t val;
   unsigned int nblocks=4;
+#if(_WIN32)
+  uint8_t* buf = (uint8_t*)alloca(sizeof(uint8_t) * SHAKE128_RATE * nblocks);
+#else
   uint8_t buf[SHAKE128_RATE*nblocks];
+#endif
   int i,j;
   uint64_t state[25]; // SHAKE state
   unsigned char extseed[KYBER_SYMBYTES+2];
